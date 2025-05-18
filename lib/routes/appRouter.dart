@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import '../screens/loginScreen.dart';
-import '../screens/signupScreen.dart';
+import 'package:go_router/go_router.dart';
 import '../screens/homeScreen.dart';
+import '../screens/notFoundScreen.dart';
 
-final appRoutes = {
-  '/login': (context) => LoginScreen(),
-  '/signup': (context) => SignupScreen(),
-  '/home': (context) => HomeScreen(),
-};
+GoRouter createRouter() {
+  return GoRouter(
+    initialLocation: '/home',
+    routes: [
+      GoRoute(path: '/', redirect: (_, __) => '/home'),
+      GoRoute(path: '/home', builder: (context, state) => const HomePage()),
+    ],
+    errorBuilder: (context, state) => const NotFoundPage(),
+  );
+}

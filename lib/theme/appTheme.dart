@@ -1,49 +1,59 @@
 import 'package:flutter/material.dart';
-import 'colorTheme.dart';
-import 'appBorders.dart';
+import 'appColors.dart';
+import 'appTextStyles.dart';
 
 class AppTheme {
-  static ThemeData get lightTheme {
+  // Light theme doesn't need context anymore
+  static ThemeData lightTheme(BuildContext context) {
     return ThemeData(
-      useMaterial3: true,
-      scaffoldBackgroundColor: AppColors.background,
-      fontFamily: 'Inter',
-      colorScheme: const ColorScheme.light().copyWith(
-        primary: AppColors.primary,
-        secondary: AppColors.accent,
-        surface: AppColors.background,
-        onPrimary: Colors.white,
-        onSurface: AppColors.text,
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: AppColors.backgroundLight,
+      primaryColor: AppColors.primaryLight,
+      colorScheme: ColorScheme.light(
+        primary: AppColors.primaryLight,
+        secondary: AppColors.secondaryLight,
+        error: AppColors.errorLight,
+        surface: AppColors.backgroundLight,
+        onSurface: AppColors.surfaceLight,
       ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.surface,
-        border: AppBorders.inputBorder,
-        enabledBorder: AppBorders.inputBorder,
-        focusedBorder: AppBorders.focusedBorder,
+      textTheme: TextTheme(
+        displayLarge: AppTextStyles.headline1(context),
+        displayMedium: AppTextStyles.headline2(context),
+        bodyLarge: AppTextStyles.bodyText(context),
+        bodyMedium: AppTextStyles.label(context),
+        bodySmall: AppTextStyles.caption(context),
       ),
     );
   }
 
-  static ThemeData get darkTheme {
+  // Dark theme doesn't need context anymore
+  static ThemeData darkTheme(BuildContext context) {
     return ThemeData(
-      useMaterial3: true,
-      scaffoldBackgroundColor: AppColors.darkBackground,
-      fontFamily: 'Inter',
-      colorScheme: const ColorScheme.dark().copyWith(
-        primary: AppColors.darkPrimary,
-        secondary: AppColors.darkAccent,
-        surface: AppColors.darkBackground,
-        onPrimary: Colors.white,
-        onSurface: AppColors.darkText,
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: AppColors.backgroundDark,
+      primaryColor: AppColors.primaryDark,
+      colorScheme: ColorScheme.dark(
+        primary: AppColors.primaryDark,
+        secondary: AppColors.secondaryDark,
+        error: AppColors.errorDark,
+        surface: AppColors.backgroundDark,
+        onSurface: AppColors.surfaceDark,
       ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.darkSurface,
-        border: AppBorders.inputBorder,
-        enabledBorder: AppBorders.inputBorder,
-        focusedBorder: AppBorders.focusedDarkBorder,
+      textTheme: TextTheme(
+        displayLarge: AppTextStyles.headline1(context),
+        displayMedium: AppTextStyles.headline2(context),
+        bodyLarge: AppTextStyles.bodyText(context),
+        bodyMedium: AppTextStyles.label(context),
+        bodySmall: AppTextStyles.caption(context),
       ),
     );
+  }
+
+  // Dynamically get theme based on current mode
+  static ThemeData getTheme(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark
+        ? darkTheme(context)
+        : lightTheme(context);
   }
 }
