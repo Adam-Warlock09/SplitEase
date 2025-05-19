@@ -54,7 +54,7 @@ class HomePage extends StatelessWidget {
                                         Theme.of(
                                           context,
                                         ).textTheme.displayLarge,
-                                    fontSize: 48,
+                                    fontSize: 64,
                                     fontWeight: FontWeight.w700,
                                   ),
                                   maxLines: 1,
@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
                                   style: GoogleFonts.jacquesFrancois(
                                     textStyle:
                                         Theme.of(context).textTheme.labelSmall,
-                                    fontSize: 16,
+                                    fontSize: 24,
                                     fontWeight: FontWeight.w400,
                                     color: Color(0xFF393939),
                                   ),
@@ -98,7 +98,7 @@ class HomePage extends StatelessWidget {
                                           Theme.of(
                                             context,
                                           ).textTheme.bodyMedium,
-                                      fontSize: 24,
+                                      fontSize: 28,
                                       fontWeight: FontWeight.w500,
                                       // color: Color(0xFF393939),
                                     ),
@@ -109,7 +109,7 @@ class HomePage extends StatelessWidget {
                                 AppSpacing.verticalMd,
                                 ElevatedButton(
                                   onPressed: () {
-                                    context.go('/signup');
+                                    context.go('/login');
                                   },
                                   style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.symmetric(
@@ -127,7 +127,7 @@ class HomePage extends StatelessWidget {
                                           Theme.of(
                                             context,
                                           ).textTheme.bodyMedium,
-                                      fontSize: 24,
+                                      fontSize: 28,
                                       fontWeight: FontWeight.w500,
                                       // color: Color(0xFF393939),
                                     ),
