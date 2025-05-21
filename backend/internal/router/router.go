@@ -1,11 +1,14 @@
 package router
 
 import (
-	"net/http"
-	"github.com/gorilla/mux"
 	"fmt"
+	"net/http"
+
+	"github.com/gorilla/mux"
 
 	"github.com/Adam-Warlock09/SplitEase/backend/internal/handlers"
+	"github.com/Adam-Warlock09/SplitEase/backend/internal/middleware"
+
 )
 
 func NewRouter() *mux.Router {
@@ -20,6 +23,12 @@ func NewRouter() *mux.Router {
 	// LOGIN ROUTE
 	router.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
 	router.HandleFunc("/signup", handlers.SignupHandler).Methods("POST")
+
+	// PROTECTED SUBROUTER
+	protectedSubRouter := router.PathPrefix("/api").Subrouter()
+	protectedSubRouter.Use(middleware.AuthMiddleware)
+
+	protectedSubRouter.HandleFunc("/protected", handlers.ProtectedHandler).Methods("GET")
 
 	return router
 

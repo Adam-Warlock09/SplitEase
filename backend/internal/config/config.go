@@ -1,11 +1,13 @@
 package config
 
+import "os"
+
 type ServerConfig struct {
 	Port string
 }
 
 func LoadConfig() *ServerConfig {
 	return &ServerConfig{
-		Port: ":8080",
+		Port: os.Getenv("PORT"),
 	}
 }

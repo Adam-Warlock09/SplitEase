@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func CORSMiddleware(routerHandler http.Handler) http.Handler {
+func CORSMiddleware(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -17,7 +17,7 @@ func CORSMiddleware(routerHandler http.Handler) http.Handler {
 			return
 		}
 
-		routerHandler.ServeHTTP(w, r)
+		next.ServeHTTP(w, r)
 
 	})
 
