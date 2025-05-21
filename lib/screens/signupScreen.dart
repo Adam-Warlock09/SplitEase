@@ -53,7 +53,7 @@ class _SignupPageState extends State<SignupPage> {
       if (responseData != null) {
 
         final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
-        await sessionProvider.SaveSession(responseData["token"], responseData["user"]["id"]);
+        await sessionProvider.SaveSession(responseData["token"], responseData["user"]["id"], responseData["user"]["name"]);
 
         if (!mounted) return;
 
