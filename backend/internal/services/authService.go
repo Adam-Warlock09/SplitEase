@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 
+	"github.com/Adam-Warlock09/SplitEase/backend/internal/config"
 	"github.com/Adam-Warlock09/SplitEase/backend/internal/models"
 	"github.com/Adam-Warlock09/SplitEase/backend/internal/storage"
 
@@ -16,7 +17,7 @@ func AuthenticateUser(email string, password string) (*models.User, error) {
 		return nil, errors.New("invalid email or password")
 	}
 
-	if user.Password != password {
+	if !config.CheckPasswordHash(password, user.HashedPassword) {
 		return nil, errors.New("invalid email or password")
 	}
 
