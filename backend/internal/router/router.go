@@ -29,6 +29,7 @@ func NewRouter() *mux.Router {
 	protectedSubRouter.Use(middleware.AuthMiddleware)
 
 	protectedSubRouter.HandleFunc("/protected", handlers.ProtectedHandler).Methods("GET")
+	protectedSubRouter.HandleFunc("/verify", handlers.VerificationHandler).Methods("GET")
 
 	return router
 

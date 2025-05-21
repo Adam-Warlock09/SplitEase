@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:split_ease/providers/sessionProvider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:split_ease/services/api.dart';
 import 'package:split_ease/theme/appSpacing.dart';
@@ -44,10 +46,19 @@ class _SignupPageState extends State<SignupPage> {
       final password = _passwordController.text;
 
       final api = ApiService();
-      final success = await api.signup(name, email, password);
+      final responseData = await api.signup(name, email, password);
 
-      if (success) {
-        context.go('/home');
+      if (!mounted) return;
+
+      if (responseData != null) {
+
+        final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+        await sessionProvider.SaveSession(responseData["token"], responseData["user"]["id"]);
+
+        if (!mounted) return;
+
+        context.go('/dashboard');
+
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

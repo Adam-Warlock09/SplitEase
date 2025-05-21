@@ -1,14 +1,12 @@
 package middleware
 
 import (
-
 	"context"
 	"net/http"
-	"strings"
 	"os"
+	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
-
 )
 
 type contextKey string
@@ -45,12 +43,16 @@ func AuthMiddleware(routerHandler http.Handler) http.Handler {
 		}
 
 		claims, ok := token.Claims.(jwt.MapClaims)
-		if !ok || claims["UserID"] == nil {
+		if !ok || claims["id"] == nil {
 			http.Error(w, "Invalid token claims", http.StatusUnauthorized)
 			return
 		}
+		if _, ok := claims["exp"]; !ok {
+			http.Error(w, "Token missing expiration", http.StatusUnauthorized)
+			return
+		}
 
-		ctx := context.WithValue(r.Context(), userIDkey, claims["UserID"].(string))
+		ctx := context.WithValue(r.Context(), userIDkey, claims["id"].(string))
 		routerHandler.ServeHTTP(w, r.WithContext(ctx))
 
 	})

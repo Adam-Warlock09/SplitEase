@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:split_ease/providers/sessionProvider.dart';
 import 'theme/appTheme.dart';
 import 'routes/appRouter.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
@@ -13,11 +14,18 @@ void main() async {
   final themeNotifier = ThemeNotifier();
   await themeNotifier.loadTheme();
 
+  // Load Session from SharedPreferences
+  final sessionProvider = SessionProvider();
+  await sessionProvider.LoadSession();
+
   setUrlStrategy(PathUrlStrategy());
 
   runApp(
-    ChangeNotifierProvider.value(
-      value: themeNotifier,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: themeNotifier),
+        ChangeNotifierProvider.value(value: sessionProvider),
+      ],
       child: const BillSplitApp(),
     ),
   );
