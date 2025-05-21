@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:split_ease/theme/appSpacing.dart';
 import 'package:split_ease/widgets/centeredBox.dart';
 import 'package:split_ease/widgets/curvedBackground.dart';
 import 'package:split_ease/widgets/fullBox.dart';
+import 'package:split_ease/services/api.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,12 +29,41 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _submitLogin() {
+  void _submitLogin() async {
+    
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
-      print("Logging in with $email and $password");
+      final api = ApiService();
+      final success = await api.login(email, password);
+
+      if (!mounted) return;
+
+      if (success) {
+        context.go('/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              "Invalid Credentials!",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 
@@ -53,8 +84,8 @@ class _LoginPageState extends State<LoginPage> {
                       child: Padding(
                         padding: const EdgeInsets.only(
                           left: 32.0,
-                          top: 48.0,
-                          bottom: 48.0,
+                          top: 16.0,
+                          bottom: 16.0,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,11 +125,15 @@ class _LoginPageState extends State<LoginPage> {
                             Form(
                               key: _formKey,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.lg,
+                                ),
                                 child: Column(
                                   children: [
                                     ConstrainedBox(
-                                      constraints: BoxConstraints(maxWidth: 400),
+                                      constraints: BoxConstraints(
+                                        maxWidth: 400,
+                                      ),
                                       child: TextFormField(
                                         controller: _emailController,
                                         decoration: const InputDecoration(
@@ -106,7 +141,8 @@ class _LoginPageState extends State<LoginPage> {
                                           border: OutlineInputBorder(),
                                           prefixIcon: Icon(Icons.email),
                                         ),
-                                        keyboardType: TextInputType.emailAddress,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
                                             return "Enter Email";
@@ -120,9 +156,11 @@ class _LoginPageState extends State<LoginPage> {
                                         },
                                       ),
                                     ),
-                                    AppSpacing.verticalMd,
+                                    AppSpacing.verticalSm,
                                     ConstrainedBox(
-                                      constraints: BoxConstraints(maxWidth: 400),
+                                      constraints: BoxConstraints(
+                                        maxWidth: 400,
+                                      ),
                                       child: TextFormField(
                                         controller: _passwordController,
                                         decoration: InputDecoration(
@@ -136,18 +174,23 @@ class _LoginPageState extends State<LoginPage> {
                                                   : Icons.visibility_off,
                                             ),
                                             onPressed: () {
-                                              setState(() => _obscurePassword = !_obscurePassword);
+                                              setState(
+                                                () =>
+                                                    _obscurePassword =
+                                                        !_obscurePassword,
+                                              );
                                             },
                                           ),
                                         ),
                                         obscureText: _obscurePassword,
                                         validator: (value) {
-                                          if (value == null || value.isEmpty) return "Enter Password";
+                                          if (value == null || value.isEmpty)
+                                            return "Enter Password";
                                           return null;
                                         },
                                       ),
                                     ),
-                                    AppSpacing.verticalLg,
+                                    AppSpacing.verticalMd,
                                     ElevatedButton(
                                       onPressed: _submitLogin,
                                       style: ElevatedButton.styleFrom(
@@ -156,7 +199,9 @@ class _LoginPageState extends State<LoginPage> {
                                           vertical: 10,
                                         ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                       ),
                                       child: AutoSizeText(

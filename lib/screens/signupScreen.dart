@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:split_ease/services/api.dart';
 import 'package:split_ease/theme/appSpacing.dart';
 import 'package:split_ease/widgets/centeredBox.dart';
 import 'package:split_ease/widgets/curvedBackground.dart';
@@ -32,13 +34,41 @@ class _SignupPageState extends State<SignupPage> {
     super.dispose();
   }
 
-  void _submitSignup() {
+  void _submitSignup() async {
+
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (_formKey.currentState!.validate()) {
       final name = _nameController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
-      print("Registered user : $name , $email , $password");
+      final api = ApiService();
+      final success = await api.signup(name, email, password);
+
+      if (success) {
+        context.go('/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              "User Already Exists!",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+
     }
   }
 
