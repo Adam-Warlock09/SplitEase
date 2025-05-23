@@ -3,57 +3,119 @@ import 'appColors.dart';
 import 'appTextStyles.dart';
 
 class AppTheme {
-  // Light theme doesn't need context anymore
   static ThemeData lightTheme(BuildContext context) {
     return ThemeData(
       brightness: Brightness.light,
+      useMaterial3: true,
       scaffoldBackgroundColor: AppColors.backgroundLight,
       primaryColor: AppColors.primaryLight,
-      colorScheme: ColorScheme.light(
+      colorScheme: ColorScheme(
+        brightness: Brightness.light,
         primary: AppColors.primaryLight,
+        onPrimary: AppColors.onPrimaryLight,
         secondary: AppColors.secondaryLight,
+        onSecondary: AppColors.onSecondaryLight,
         error: AppColors.errorLight,
-        surface: AppColors.backgroundLight,
-        onSurface: AppColors.surfaceLight,
+        onError: AppColors.onErrorLight,
+        surface: AppColors.surfaceLight,
+        onSurface: AppColors.onSurfaceLight,
+        primaryContainer: AppColors.primaryVariantLight,
+        onPrimaryContainer: AppColors.onPrimaryLight,
+        secondaryContainer: AppColors.secondaryVariantLight,
+        onSecondaryContainer: AppColors.onSecondaryLight,
+        inversePrimary: AppColors.complementaryLight,
+        primaryFixed: AppColors.analogousLight,
+        primaryFixedDim: AppColors.analogousVariantLight,
+        onPrimaryFixed: AppColors.onPrimaryLight,
+        onPrimaryFixedVariant: AppColors.onPrimaryLight,
+        tertiary: AppColors.triadicLight,
+        tertiaryContainer: AppColors.triadicVariantLight,
+        onTertiary: AppColors.black,
+        onTertiaryContainer: AppColors.white,
+        surfaceContainer: AppColors.greyLight,
+        surfaceContainerHighest: AppColors.grey,
+        onSurfaceVariant: AppColors.onSurfaceLight,
+        outline: AppColors.grey,
+        outlineVariant: AppColors.greyLight,
+        shadow: AppColors.greyDark,
+        scrim: AppColors.grey.withAlpha(128),
+        inverseSurface: AppColors.greyDark,
+        onInverseSurface: AppColors.white,
+        surfaceTint: AppColors.primaryLight,
       ),
       textTheme: TextTheme(
-        displayLarge: AppTextStyles.headline1(context),
-        displayMedium: AppTextStyles.headline2(context),
-        bodyLarge: AppTextStyles.bodyText(context),
-        bodyMedium: AppTextStyles.label(context),
-        bodySmall: AppTextStyles.caption(context),
+        displayLarge: AppTextStyles.brandHeadlineLight(),
+        displayMedium: AppTextStyles.sectionHeadingLight(),
+        titleLarge: AppTextStyles.titleLight(),
+        bodyLarge: AppTextStyles.bodyLight(),
+        bodyMedium: AppTextStyles.captionLight(),
+      ),
+      drawerTheme: const DrawerThemeData(
+        backgroundColor: AppColors.surfaceLight,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.primaryLight,
+        foregroundColor: AppColors.onPrimaryLight,
+        elevation: 0,
       ),
     );
   }
 
-  // Dark theme doesn't need context anymore
   static ThemeData darkTheme(BuildContext context) {
     return ThemeData(
       brightness: Brightness.dark,
+      useMaterial3: true,
       scaffoldBackgroundColor: AppColors.backgroundDark,
       primaryColor: AppColors.primaryDark,
-      colorScheme: ColorScheme.dark(
+      colorScheme: ColorScheme(
+        brightness: Brightness.dark,
         primary: AppColors.primaryDark,
+        onPrimary: AppColors.onPrimaryDark,
         secondary: AppColors.secondaryDark,
+        onSecondary: AppColors.onSecondaryDark,
         error: AppColors.errorDark,
-        surface: AppColors.backgroundDark,
-        onSurface: AppColors.surfaceDark,
+        onError: AppColors.onErrorDark,
+        surface: AppColors.surfaceDark,
+        onSurface: AppColors.onSurfaceDark,
+        primaryContainer: AppColors.primaryVariantDark,
+        onPrimaryContainer: AppColors.onPrimaryDark,
+        secondaryContainer: AppColors.secondaryVariantDark,
+        onSecondaryContainer: AppColors.onSecondaryDark,
+        inversePrimary: AppColors.complementaryDark,
+        primaryFixed: AppColors.analogousDark,
+        primaryFixedDim: AppColors.analogousVariantDark,
+        onPrimaryFixed: AppColors.onPrimaryDark,
+        onPrimaryFixedVariant: AppColors.onPrimaryDark,
+        tertiary: AppColors.triadicDark,
+        tertiaryContainer: AppColors.triadicVariantDark,
+        onTertiary: AppColors.greyLight,
+        onTertiaryContainer: AppColors.greyDark,
+        surfaceContainer: AppColors.greyDark,
+        surfaceContainerHighest: AppColors.grey,
+        onSurfaceVariant: AppColors.onSurfaceDark,
+        outline: AppColors.grey,
+        outlineVariant: AppColors.greyDark,
+        shadow: AppColors.greyDark,
+        scrim: AppColors.grey.withAlpha(128),
+        inverseSurface: AppColors.greyDark,
+        onInverseSurface: AppColors.white,
+        surfaceTint: AppColors.primaryDark,
       ),
       textTheme: TextTheme(
-        displayLarge: AppTextStyles.headline1(context),
-        displayMedium: AppTextStyles.headline2(context),
-        bodyLarge: AppTextStyles.bodyText(context),
-        bodyMedium: AppTextStyles.label(context),
-        bodySmall: AppTextStyles.caption(context),
+        displayLarge: AppTextStyles.brandHeadlineDark(),
+        displayMedium: AppTextStyles.sectionHeadingDark(),
+        titleLarge: AppTextStyles.titleDark(),
+        bodyLarge: AppTextStyles.bodyDark(),
+        bodyMedium: AppTextStyles.captionDark(),
+      ),
+      drawerTheme: const DrawerThemeData(
+        backgroundColor: AppColors.surfaceDark,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.primaryDark,
+        foregroundColor: AppColors.onPrimaryDark,
+        elevation: 0,
       ),
     );
-  }
-
-  // Dynamically get theme based on current mode
-  static ThemeData getTheme(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    return brightness == Brightness.dark
-        ? darkTheme(context)
-        : lightTheme(context);
   }
 }

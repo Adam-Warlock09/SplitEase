@@ -1,9 +1,39 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:split_ease/models/group.dart';
 
 class ApiService {
 
   final String baseUrl = 'http://localhost:8080';
+
+  Future<List<Group>?> fetchGroups(String? token) async {
+
+    if (token == null) {
+      return null;
+    }
+
+    try {
+      
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/groups'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List Data = jsonDecode(response.body);
+        return Data.map((json) => Group.fromJson(json)).toList();
+      } else {
+        return null;
+      }
+
+    } catch (e) {
+      return null;
+    }
+
+  }
 
   Future<Map<String, dynamic>?> login(String email, String password) async {
 
@@ -62,6 +92,7 @@ class ApiService {
     try {
 
       final response = await http.get(
+
         Uri.parse('$baseUrl/api/verify'),
         headers: {
           'Content-Type': 'application/json',

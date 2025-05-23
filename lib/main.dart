@@ -42,8 +42,8 @@ class _BillSplitAppState extends State<BillSplitApp> {
   late GoRouter _router;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
     _router = createRouter();
   }
 

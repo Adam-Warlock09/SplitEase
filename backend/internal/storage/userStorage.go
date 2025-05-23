@@ -27,7 +27,7 @@ func FindUserByEmail(email string) (*models.User, error) {
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, errors.New("User not found")
+			return nil, errors.New("user not found")
 		}
 		return nil, err
 	}

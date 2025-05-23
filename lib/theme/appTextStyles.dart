@@ -1,71 +1,90 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'themeNotifier.dart';
-import 'appColors.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:split_ease/theme/appColors.dart';
 
 class AppTextStyles {
-  // Dynamically change text color based on the current theme (light/dark)
-  static TextStyle headline1(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
-    final isDark = themeNotifier.isDarkMode;
-    return TextStyle(
+  // App Name / Huge Heading (e.g., "SplitEase")
+  static TextStyle brandHeadlineLight() {
+    return GoogleFonts.itim(
+      fontSize: 36,
+      fontWeight: FontWeight.bold,
+      color: AppColors.onSurfaceLight,
+    );
+  }
+
+  // Section Headings (e.g., Dashboard, Groups, etc.)
+  static TextStyle sectionHeadingLight() {
+    return GoogleFonts.poppins(
       fontSize: 24,
-      fontWeight: FontWeight.bold,
-      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-    );
-  }
-
-  static TextStyle headline2(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
-    final isDark = themeNotifier.isDarkMode;
-    return TextStyle(
-      fontSize: 20,
       fontWeight: FontWeight.w600,
-      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+      color: AppColors.onSurfaceLight,
     );
   }
 
-  static TextStyle bodyText(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
-    final isDark = themeNotifier.isDarkMode;
-    return TextStyle(
+  // Titles and Subtitles
+  static TextStyle titleLight() {
+    return GoogleFonts.raleway(
+      fontSize: 18,
+      fontWeight: FontWeight.w500,
+      color: AppColors.onSurfaceLight,
+    );
+  }
+
+  // Body Text
+  static TextStyle bodyLight() {
+    return GoogleFonts.openSans(
       fontSize: 16,
-      color:
-          isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+      color: AppColors.onSurfaceLight,
     );
   }
 
-  static TextStyle label(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
-    final isDark = themeNotifier.isDarkMode;
-    return TextStyle(
-      fontSize: 14,
-      color:
-          isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-    );
-  }
-
-  static TextStyle buttonText(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
-    final isDark = themeNotifier.isDarkMode;
-    return TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 1.2,
-      color:
-          isDark
-              ? AppColors.white
-              : AppColors.black, // Example for button text color
-    );
-  }
-
-  static TextStyle caption(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
-    final isDark = themeNotifier.isDarkMode;
-    return TextStyle(
+  // Caption
+  static TextStyle captionLight() {
+    return GoogleFonts.openSans(
       fontSize: 12,
-      color:
-          isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+      color: AppColors.onSurfaceLight.withAlpha(153),
+    );
+  }
+
+  static TextStyle brandHeadlineDark() {
+    return GoogleFonts.itim(
+      fontSize: 36,
+      fontWeight: FontWeight.bold,
+      color: AppColors.onSurfaceDark,
+    );
+  }
+
+  // Section Headings (e.g., Dashboard, Groups, etc.)
+  static TextStyle sectionHeadingDark() {
+    return GoogleFonts.poppins(
+      fontSize: 24,
+      fontWeight: FontWeight.w600,
+      color: AppColors.onSurfaceDark,
+    );
+  }
+
+  // Titles and Subtitles
+  static TextStyle titleDark() {
+    return GoogleFonts.raleway(
+      fontSize: 18,
+      fontWeight: FontWeight.w500,
+      color: AppColors.onSurfaceDark,
+    );
+  }
+
+  // Body Text
+  static TextStyle bodyDark() {
+    return GoogleFonts.openSans(
+      fontSize: 16,
+      color: AppColors.onSurfaceDark,
+    );
+  }
+
+  // Caption
+  static TextStyle captionDark() {
+    return GoogleFonts.openSans(
+      fontSize: 12,
+      color: AppColors.onSurfaceDark.withAlpha(153),
     );
   }
 }
