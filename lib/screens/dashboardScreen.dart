@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -75,14 +74,13 @@ class _DashboardPageState extends State<DashboardPage> {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final session = Provider.of<SessionProvider>(context);
-    if (!session.isLoggedIn) {
-      context.go("/home");
-    }
+    final session = Provider.of<SessionProvider>(context, listen: false);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: MyAppBar(),
+      appBar: MyAppBar(
+        currentPage: "Dashboard",
+      ),
       drawer: MyDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -119,14 +117,15 @@ class _DashboardPageState extends State<DashboardPage> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          AppSpacing.verticalMd,
-                          ElevatedButton(
+                          AppSpacing.verticalLg,
+                          ElevatedButton.icon(
                             onPressed: fetchGroups,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: colorScheme.secondary,
                               foregroundColor: colorScheme.onSecondary,
                             ),
-                            child: Text(
+                            icon: Icon(Icons.refresh),
+                            label: Text(
                               'Retry',
                               style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSecondary),
                             ),
@@ -137,7 +136,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   : groups == null || groups!.isEmpty
                     ? Center(
                         child: Text(
-                          'You don\t have any groups yet.',
+                          'You don\'t have any groups yet.',
                           style: textTheme.titleLarge?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
@@ -165,7 +164,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           AppSpacing.verticalMd,
                           TextButton(
                             onPressed: () {
-                              context.push('/groups');
+                              context.go('/groups');
                             },
                             child: Text(
                               "View all groups →",

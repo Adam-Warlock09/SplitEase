@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:split_ease/providers/sessionProvider.dart';
+import 'package:split_ease/screens/createGroupScreen.dart';
+import 'package:split_ease/screens/groupsScreen.dart';
 import '../screens/homeScreen.dart';
 import '../screens/loginScreen.dart';
 import '../screens/notFoundScreen.dart';
@@ -17,6 +19,8 @@ GoRouter createRouter() {
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       GoRoute(path: '/signup', builder: (context, state) => const SignupPage()),
       GoRoute(path: '/dashboard', builder: (context, state) => const DashboardPage()),
+      GoRoute(path: '/groups', builder: (context, state) => const GroupsPage()),
+      GoRoute(path: '/groups/create', builder: (context, state) => const CreateGroupPage()),
     ],
     errorBuilder: (context, state) => const NotFoundPage(),
     redirect: (BuildContext context, GoRouterState state) {
@@ -29,7 +33,7 @@ GoRouter createRouter() {
         return "/dashboard";
       }
 
-      if (goingTo == "/dashboard" && !loggedIn) {
+      if (["/dashboard", "/groups", "/groups/create"].contains(goingTo) && !loggedIn) {
         return "/home";
       }
 

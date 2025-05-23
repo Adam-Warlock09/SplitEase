@@ -6,6 +6,43 @@ class ApiService {
 
   final String baseUrl = 'http://localhost:8080';
 
+  Future<Group?> createGroup(String name, String? description, String? token) async {
+
+    if (token == null) {
+      return null;
+    }
+
+    try {
+
+      final requestBody = {
+        'name': name,
+        if (description != null) 'description': description,
+      };
+      
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/group'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        return Group.fromJson(json);
+      } else {
+        print('Create group failed: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+
+    } catch (e) {
+      print('Create group failed: $e');
+      return null;
+    }
+
+  }
+
   Future<List<Group>?> fetchGroups(String? token) async {
 
     if (token == null) {
@@ -23,6 +60,9 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
+        if (response.body.trim() == "null") {
+          return [];
+        }
         final List Data = jsonDecode(response.body);
         return Data.map((json) => Group.fromJson(json)).toList();
       } else {

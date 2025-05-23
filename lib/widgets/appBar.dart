@@ -6,13 +6,21 @@ import 'package:split_ease/theme/appSpacing.dart';
 import 'package:split_ease/theme/themeNotifier.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const MyAppBar({super.key});
+
+  final String currentPage;
+
+  const MyAppBar({
+    super.key,
+    required this.currentPage,
+  });
 
   Future<void> _logout(BuildContext context) async {
 
     final session = Provider.of<SessionProvider>(context, listen: false);
     await session.DeleteSession();
-    if (context.mounted) context.go('/home');
+      if (context.mounted) {
+        context.go('/home');
+      }
 
   }
 
@@ -28,7 +36,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       flexibleSpace: Container(decoration: BoxDecoration(gradient: LinearGradient(colors: [Theme.of(context).colorScheme.primaryFixed, Theme.of(context).colorScheme.primary]))),
       centerTitle: true,
       title: Text(
-        'Dashboard',
+        currentPage,
         semanticsLabel: 'Page Title',
         style: Theme.of(context).textTheme.displayMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
       ),
@@ -46,7 +54,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
           iconSize: 28.0,
           icon: const Icon(Icons.person),
           tooltip: 'Profile',
-          onPressed: () => context.push('/profile'),
+          onPressed: () => context.go('/profile'),
         ),
         AppSpacing.horizontalLg,
         IconButton(
