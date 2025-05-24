@@ -104,15 +104,20 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
 
       if(!mounted) return;
 
-      setState(() {
-        _filteredUsers = allUsers
-          .where((user) =>
-            user.name.toLowerCase().contains(query) ||
-            user.email.toLowerCase().contains(query))
-          .where((user) => !group.members.any((m) => m.id == user.id))
-          .toList();
-      });
-    
+      if (query.isEmpty) {
+        setState(() {
+          _filteredUsers = [];
+        });
+      } else {
+        setState(() {
+          _filteredUsers = allUsers
+            .where((user) =>
+              user.name.toLowerCase().contains(query) ||
+              user.email.toLowerCase().contains(query))
+            .where((user) => !group.members.any((m) => m.id == user.id))
+            .toList();
+        });
+      }
     });
 
   }
@@ -150,7 +155,7 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
         SnackBar(
           content: const Text(
             "Member Added Successfully",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
           ),
           backgroundColor: colorScheme.inversePrimary,
           behavior: SnackBarBehavior.floating,
@@ -175,7 +180,7 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
         SnackBar(
           content: Text(
             "Failed To Add Member",
-            style: TextStyle(color: colorScheme.error, fontWeight: FontWeight.bold),
+            style: TextStyle(color: colorScheme.onError, fontSize: 24, fontWeight: FontWeight.bold),
           ),
           backgroundColor: colorScheme.error,
           behavior: SnackBarBehavior.floating,
@@ -220,7 +225,7 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
         SnackBar(
           content: const Text(
             "Member Removed Successfully",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
           ),
           backgroundColor: colorScheme.inversePrimary,
           behavior: SnackBarBehavior.floating,
@@ -245,7 +250,7 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
         SnackBar(
           content: Text(
             "Failed To Remove Member",
-            style: TextStyle(color: colorScheme.error, fontWeight: FontWeight.bold),
+            style: TextStyle(color: colorScheme.onError, fontSize: 24, fontWeight: FontWeight.bold),
           ),
           backgroundColor: colorScheme.error,
           behavior: SnackBarBehavior.floating,
@@ -384,6 +389,8 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
                 );
               }
 
+              final session = Provider.of<SessionProvider>(context);
+
               return Padding(
                 padding: const EdgeInsets.all(32.0),
                 child: Column(
@@ -412,52 +419,51 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
                                 ),
                               ),
                             ),
-                            Flexible(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Flexible(
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.calendar_today,
-                                          size: 20,
-                                          color: colorScheme.onSurface,
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.calendar_today,
+                                        size: 22,
+                                        color: colorScheme.onSurface,
+                                      ),
+                                      AppSpacing.horizontalSm,
+                                      Text(
+                                        "Created ${_formatFullDate(group.createdAt)}",
+                                        style: textTheme.titleLarge?.copyWith(
+                                          color: colorScheme.onSurface.withAlpha(170),
                                         ),
-                                        AppSpacing.horizontalSm,
-                                        Text(
-                                          "Created ${_formatFullDate(group.createdAt)}",
-                                          style: textTheme.titleLarge?.copyWith(
-                                            color: colorScheme.onSurface.withAlpha(170),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                  AppSpacing.verticalSm,
-                                  Flexible(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Icon(
-                                          Icons.update,
-                                          size: 20,
-                                          color: colorScheme.onSurface,
+                                ),
+                                AppSpacing.verticalMd,
+                                Flexible(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Icon(
+                                        Icons.update,
+                                        size: 22,
+                                        color: colorScheme.onSurface,
+                                      ),
+                                      AppSpacing.horizontalSm,
+                                      Text(
+                                        "Updated ${_formatRelativeTime(group.updatedAt)}",
+                                        style: textTheme.titleLarge?.copyWith(
+                                          color: colorScheme.onSurface.withAlpha(170),
                                         ),
-                                        AppSpacing.horizontalSm,
-                                        Text(
-                                          "Updated ${_formatRelativeTime(group.updatedAt)}",
-                                          style: textTheme.titleLarge?.copyWith(
-                                            color: colorScheme.onSurface.withAlpha(170),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            )
+                                ),
+                              ],
+                            ),
                           ],
                         )
                       : Row(
@@ -511,14 +517,32 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  TextField(
-                                    controller: _searchController,
-                                    autofocus: true,
-                                    decoration: InputDecoration(
-                                      labelText: 'Search Users',
-                                      prefixIcon: Icon(Icons.person_search),
-                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),),
-                                    ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextField(
+                                          controller: _searchController,
+                                          autofocus: true,
+                                          decoration: InputDecoration(
+                                            labelText: 'Search Users',
+                                            prefixIcon: Icon(Icons.person_search),
+                                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),),
+                                          ),
+                                        ),
+                                      ),
+                                      AppSpacing.horizontalMd,
+                                      IconButton(
+                                        icon: Icon(Icons.close),
+                                        tooltip: 'Cancel',
+                                        onPressed: () {
+                                          setState(() {
+                                            _isSearching = false;
+                                            _searchController.clear();
+                                            _filteredUsers.clear();
+                                          });
+                                        },
+                                      ),
+                                    ],
                                   ),
                                   AppSpacing.verticalMd,
                                   Container(
@@ -570,8 +594,29 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
                                   AppSpacing.verticalLg,
                                 ],
                               ) 
-                            : SizedBox.shrink(),
+                            : group.createdBy.id == session.userID
+                              ? Align(
+                                  alignment: Alignment.center,
+                                  child: ElevatedButton.icon(
+                                    icon: Icon(Icons.person_add, size: 32, color: colorScheme.onPrimary,),
+                                    label: Text('Add Users', style: textTheme.displayMedium?.copyWith(color: colorScheme.onPrimary),),
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                      backgroundColor: colorScheme.primary,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isSearching = true;
+                                        _searchController.clear();
+                                        _filteredUsers.clear();
+                                      });
+                                    },
+                                  ),
+                                )
+                              : SizedBox.shrink(),
                         ),
+                        if (group.createdBy.id == session.userID)
                         Divider(height: 32.0),
                         Text(
                           "Members",
@@ -703,11 +748,11 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
                                                         final confirmed = await showDialog<bool>(
                                                           context: context,
                                                           builder: (context) => AlertDialog(
-                                                            icon: Icon(Icons.warning, color: colorScheme.error,),
-                                                            title: Text('Confirm Removal'),
-                                                            content: Text('This will permanently remove ${member.name} from the group'),
+                                                            icon: Icon(Icons.warning, color: colorScheme.error, size: 36,),
+                                                            title: Text('Confirm Removal', style: textTheme.displayMedium,),
+                                                            content: Text('This will permanently remove ${member.name} from the group', style: textTheme.titleLarge,),
                                                             actions: [
-                                                              TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Cancel')),
+                                                              TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Cancel', style: textTheme.bodyLarge)),
                                                               TextButton(onPressed: () => Navigator.pop(context, true), child: Text('Remove', style: textTheme.bodyLarge?.copyWith(color: colorScheme.error),))
                                                             ],
                                                           ),

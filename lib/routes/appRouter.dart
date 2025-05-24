@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:split_ease/providers/sessionProvider.dart';
 import 'package:split_ease/screens/createGroupScreen.dart';
+import 'package:split_ease/screens/groupMemberScreen.dart';
 import 'package:split_ease/screens/groupScreen.dart';
 import 'package:split_ease/screens/groupsScreen.dart';
 import '../screens/homeScreen.dart';
@@ -28,7 +29,7 @@ GoRouter createRouter() {
       }),
       GoRoute(path: '/group/:id/members', builder: (context, state) {
         final groupID = state.pathParameters['id']!;
-        return GroupDetailsPage(groupID: groupID);
+        return GroupMembersPage(groupID: groupID);
       }),
     ],
     errorBuilder: (context, state) => const NotFoundPage(),

@@ -12,6 +12,33 @@ import (
 	"github.com/Adam-Warlock09/SplitEase/backend/internal/models"
 )
 
+func GetAllUsers() ([]models.User, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := config.MongoClient.Database("mydb").Collection("users")
+
+	cursor, err := collection.Find(ctx, bson.M{}, )
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var users []models.User
+	for cursor.Next(ctx) {
+		var user models.User
+		err = cursor.Decode(&user)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+
+}
+
 func FindUserByEmail(email string) (*models.User, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

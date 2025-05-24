@@ -13,5 +13,4 @@ type User struct {
 	HashedPassword string          `bson:"passwordHash" json:"password"`
 	CreatedAt      time.Time       `bson:"createdAt" json:"createdAt"`
 	UpdatedAt      time.Time       `bson:"updatedAt" json:"updatedAt"`
-	Groups         []bson.ObjectID `bson:"groups,omitempty" json:"groups,omitempty"`
 }

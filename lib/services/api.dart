@@ -8,6 +8,39 @@ class ApiService {
 
   final String baseUrl = 'http://localhost:8080';
 
+  Future<List<User>> fetchSearchSpace(String groupID, String? token) async {
+
+    if (token == null) {
+      return [];
+    }
+
+    try {
+      
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/group/$groupID/users'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (response.body.trim() == "null") {
+          return [];
+        }
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((user) => User.fromJson(user)).toList();
+      } else {
+        print('Failed to fetch users: ${response.body}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching users: $e');
+      return [];
+    }
+
+  }
+
   Future<User?> addMemberToGroup(String groupID, String memberID, String? token) async {
 
     if (token == null) {
