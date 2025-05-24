@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:split_ease/providers/sessionProvider.dart';
 import 'package:split_ease/screens/createGroupScreen.dart';
+import 'package:split_ease/screens/groupScreen.dart';
 import 'package:split_ease/screens/groupsScreen.dart';
 import '../screens/homeScreen.dart';
 import '../screens/loginScreen.dart';
@@ -21,6 +22,14 @@ GoRouter createRouter() {
       GoRoute(path: '/dashboard', builder: (context, state) => const DashboardPage()),
       GoRoute(path: '/groups', builder: (context, state) => const GroupsPage()),
       GoRoute(path: '/groups/create', builder: (context, state) => const CreateGroupPage()),
+      GoRoute(path: '/group/:id', builder: (context, state) {
+        final groupID = state.pathParameters['id']!;
+        return GroupDetailsPage(groupID: groupID);
+      }),
+      GoRoute(path: '/group/:id/members', builder: (context, state) {
+        final groupID = state.pathParameters['id']!;
+        return GroupDetailsPage(groupID: groupID);
+      }),
     ],
     errorBuilder: (context, state) => const NotFoundPage(),
     redirect: (BuildContext context, GoRouterState state) {
@@ -33,8 +42,11 @@ GoRouter createRouter() {
         return "/dashboard";
       }
 
-      if (["/dashboard", "/groups", "/groups/create"].contains(goingTo) && !loggedIn) {
-        return "/home";
+      final protectedPrefixes = ['/group/'];
+      final protectedRoutes = ['/dashboard', '/groups'];
+
+      if (!loggedIn && (protectedPrefixes.any((prefix) => goingTo.startsWith(prefix)) || protectedRoutes.contains(goingTo))) {
+        return '/home';
       }
 
       return null;

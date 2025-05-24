@@ -39,7 +39,11 @@ class _GroupsPageState extends State<GroupsPage> {
       
       final session = Provider.of<SessionProvider>(context, listen: false);
       if (!session.isLoggedIn) {
-        context.go('/home');
+        if (mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.go('/home');
+          });
+        }
       }
       final token = session.token;
 
@@ -214,6 +218,9 @@ class _GroupsPageState extends State<GroupsPage> {
                                   final currentUserId = session.userID;
                                   return Center(
                                     child: GroupCard(
+                                      onTap: () {
+                                        context.go("/group/${group.id}");
+                                      },
                                       group: group,
                                       currentUserID: currentUserId!,
                                     ),

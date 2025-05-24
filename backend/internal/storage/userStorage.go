@@ -36,6 +36,30 @@ func FindUserByEmail(email string) (*models.User, error) {
 
 }
 
+func GetUserByID(userID bson.ObjectID) (*models.User, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := config.MongoClient.Database("mydb").Collection("users")
+
+	filter := bson.M{"_id" : userID}
+
+	var user models.User
+
+	err := collection.FindOne(ctx, filter).Decode(&user)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+
+	return &user, nil
+
+}
+
 func AddUser(user *models.User)  (*models.User, error) {
 
 	ctx, cancel := context .WithTimeout(context.Background(), 10*time.Second)

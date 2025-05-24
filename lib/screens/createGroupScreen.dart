@@ -41,7 +41,11 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
 
     final session = Provider.of<SessionProvider>(context, listen: false);
     if (!session.isLoggedIn) {
-      context.go("/home");
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.go('/home');
+        });
+      }
       return;
     }
 
@@ -75,7 +79,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
           ),
         );
       }else {
-        context.go("/groups");
+        context.go("/group/${responseData.id}");
       }
 
     } catch (e) {

@@ -18,9 +18,9 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     final session = Provider.of<SessionProvider>(context, listen: false);
     await session.DeleteSession();
-      if (context.mounted) {
-        context.go('/home');
-      }
+    if (context.mounted) {
+      context.go('/home');
+    }
 
   }
 

@@ -40,12 +40,18 @@ class _DashboardPageState extends State<DashboardPage> {
       
       final session = Provider.of<SessionProvider>(context, listen: false);
       if (!session.isLoggedIn) {
-        context.go("/home");
+        if (mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.go('/home');
+          });
+        }
       }
       final token = session.token;
 
       final api = ApiService();
       final responseData = await api.fetchGroups(token);
+
+      if (!mounted) return;
 
       if (responseData == null) {
         setState(() {
@@ -155,7 +161,10 @@ class _DashboardPageState extends State<DashboardPage> {
                               final currentUserId = session.userID;
                               return Center(
                                 child: GroupCard(
-                                  group: group,
+                                  onTap: () {
+                                    context.go("/group/${group.id}");
+                                  },
+                                   group: group,
                                   currentUserID: currentUserId!,
                                 ),
                               );
