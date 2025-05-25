@@ -89,7 +89,7 @@ func GetUserByID(userID bson.ObjectID) (*models.User, error) {
 
 func AddUser(user *models.User)  (*models.User, error) {
 
-	ctx, cancel := context .WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	collection := config.MongoClient.Database("mydb").Collection("users")

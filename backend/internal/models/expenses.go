@@ -15,6 +15,5 @@ type Expense struct {
 	SplitType string             `bson:"splitType" json:"splitType"` // "equal", "percentage", "uneven"
 	Splits    map[string]float64 `bson:"splits" json:"splits"`       // userId string -> share (amount)
 	CreatedAt time.Time          `bson:"createdAt" json:"createdAt"`
-	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt"`
 	Notes     string             `bson:"notes,omitempty" json:"notes,omitempty"`
 }

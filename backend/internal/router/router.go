@@ -36,6 +36,7 @@ func NewRouter() *mux.Router {
 	protectedSubRouter.HandleFunc("/group/{groupID}/member", handlers.AddMemberHandler).Methods("POST")
 	protectedSubRouter.HandleFunc("/group/{groupID}/member/{memberID}", handlers.RemoveMemberHandler).Methods("DELETE")
 	protectedSubRouter.HandleFunc("/group/{groupID}/users", handlers.GetOtherUsersHandler).Methods("GET")
+	protectedSubRouter.HandleFunc("/group/{groupID}/expenses", handlers.GetExpensesHandler).Methods("GET")
 
 	return router
 
