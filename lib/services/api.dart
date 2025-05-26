@@ -3,12 +3,46 @@ import 'package:http/http.dart' as http;
 import 'package:split_ease/models/expense.dart';
 import 'package:split_ease/models/group.dart';
 import 'package:split_ease/models/groupDetailed.dart';
+import 'package:split_ease/models/settlement.dart';
 import 'package:split_ease/models/transaction.dart';
 import 'package:split_ease/models/user.dart';
 
 class ApiService {
 
   final String baseUrl = 'http://localhost:8080';
+
+  Future<List<Settlement>> fetchSettlementsByGroupID(String groupID, String? token) async {
+
+    if(token == null) {
+      return [];
+    }
+
+    try {
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/group/$groupID/settle'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (response.body.trim() == "null") {
+          return [];
+        }
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((settlement) => Settlement.fromJson(settlement)).toList();
+      } else {
+        print('Failed to fetch settlements: ${response.body}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching settlements: $e');
+      return [];
+    }
+
+  }
 
   Future<Transaction?> createTransaction(String? notes, double amount, String fromUser, String toUser, String groupID, String? token) async {
 

@@ -8,6 +8,7 @@ import 'package:split_ease/screens/createTransactionScreen.dart';
 import 'package:split_ease/screens/groupExpensesScreen.dart';
 import 'package:split_ease/screens/groupMemberScreen.dart';
 import 'package:split_ease/screens/groupScreen.dart';
+import 'package:split_ease/screens/groupSettleScreen.dart';
 import 'package:split_ease/screens/groupTransactionsScreen.dart';
 import 'package:split_ease/screens/groupsScreen.dart';
 import '../screens/homeScreen.dart';
@@ -53,7 +54,7 @@ GoRouter createRouter() {
       }),
       GoRoute(path: '/group/:id/settle', builder: (context, state) {
         final groupID = state.pathParameters['id']!;
-        return CreateTransactionPage(groupID: groupID);
+        return GroupSettlePage(groupID: groupID);
       }),
     ],
     errorBuilder: (context, state) => const NotFoundPage(),
