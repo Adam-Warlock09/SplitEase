@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:split_ease/models/expense.dart';
 import 'package:split_ease/models/group.dart';
 import 'package:split_ease/models/groupDetailed.dart';
 import 'package:split_ease/models/user.dart';
@@ -7,6 +8,95 @@ import 'package:split_ease/models/user.dart';
 class ApiService {
 
   final String baseUrl = 'http://localhost:8080';
+
+  Future<bool> removeExpenseFromGroup(String groupID, String expenseID, String? token) async {
+  if (token == null) return false;
+
+  try {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/api/group/$groupID/expenses/$expenseID'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      }
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Failed to remove expense: ${response.body}');
+      return false;
+    }
+  } catch (e) {
+    print('Exception while removing expense: $e');
+    return false;
+  }
+}
+
+  Future<Expense?> createExpense(Expense newExpense, String groupID, String? token) async {
+
+    if (token == null) {
+      return null;
+    }
+
+    try {
+      
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/group/$groupID/expenses'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(newExpense.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        return Expense.fromJson(json);
+      } else {
+        print('Create group failed: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+
+    } catch (e) {
+      print('Create group failed: $e');
+      return null;
+    }
+
+  }
+
+  Future<List<Expense>> fetchExpensesByGroupID(String groupID, String? token) async {
+
+    if(token == null) {
+      return [];
+    }
+
+    try {
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/group/$groupID/expenses'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (response.body.trim() == "null") {
+          return [];
+        }
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((expense) => Expense.fromJson(expense)).toList();
+      } else {
+        print('Failed to fetch users: ${response.body}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching users: $e');
+      return [];
+    }
+
+  }
 
   Future<List<User>> fetchSearchSpace(String groupID, String? token) async {
 
@@ -187,8 +277,8 @@ class ApiService {
         if (response.body.trim() == "null") {
           return [];
         }
-        final List Data = jsonDecode(response.body);
-        return Data.map((json) => Group.fromJson(json)).toList();
+        final List data = jsonDecode(response.body);
+        return data.map((json) => Group.fromJson(json)).toList();
       } else {
         return null;
       }

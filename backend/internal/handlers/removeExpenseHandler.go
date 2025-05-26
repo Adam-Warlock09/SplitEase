@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/Adam-Warlock09/SplitEase/backend/internal/middleware"
 	"github.com/Adam-Warlock09/SplitEase/backend/internal/services"
@@ -10,10 +11,11 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-func CreateExpenseHandler(w http.ResponseWriter, r *http.Request) {
+func RemoveExpenseHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	groupIDHex := vars["groupID"]
+	expenseIDHex := vars["expenseID"]
 
 	groupID, err := bson.ObjectIDFromHex(groupIDHex)
 	if err != nil {
@@ -30,6 +32,17 @@ func CreateExpenseHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := bson.ObjectIDFromHex(userIDHex)
 	if err != nil {
 		http.Error(w, "Invalid UserID", http.StatusBadRequest)
+		return
+	}
+
+	if strings.TrimSpace(expenseIDHex) == "" {
+		http.Error(w, "ExpenseID is required", http.StatusBadRequest)
+		return
+	}
+
+	expenseID, err := bson.ObjectIDFromHex(expenseIDHex);
+	if err != nil {
+		http.Error(w, "Invalid MemberID", http.StatusBadRequest)
 		return
 	}
 
@@ -52,51 +65,43 @@ func CreateExpenseHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req services.ExpenseRequest
-	err = json.NewDecoder(r.Body).Decode(&req)
+	expense, err := services.GetExpenseByID(expenseID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if (groupIDHex != req.GroupID) {
-		http.Error(w, "Invalid Request body", http.StatusBadRequest)
+	if (expense.PaidBy != userID) {
+		http.Error(w, "User is not creator of expense. Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	for splitID := range req.Splits {
-
-		userID, err := bson.ObjectIDFromHex(splitID)
-		if err != nil {
-			http.Error(w, "Invalid ObjectID in splits: " + splitID, http.StatusBadRequest)
-            return
-		}
-
-		found := false
-		for _, user := range groupWithMembers.Members {
-			if user.ID == userID {
-				found = true
-				break
-			}
-		}
-
-		if !found {
-			http.Error(w, "User ID not found in members: " + splitID, http.StatusBadRequest)
-            return
-		}
-
+	if (expense.GroupID != groupID) {
+		http.Error(w, "Expense given isn't a part of the group given.", http.StatusBadRequest)
+		return
 	}
 
-	expense, err := services.CreateExpense(&req, groupID)
+	err = services.RemoveExpenseWithID(expenseID)
 	if err != nil {
-		http.Error(w, "Failed to create expense", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	_ = services.UpdateGroupUpdatedAt(groupID)
+	err = services.UpdateGroupUpdatedAt(groupID)
+	var response map[string]interface{}
+	if err != nil {
+		response = map[string]interface{}{
+			"message": "Expense removed Successfully. Group Not Updated",
+		}
+	} else {
+		response = map[string]interface{}{
+			"message": "Expense removed Successfully",
+		}
+	}
+
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(expense)
+	json.NewEncoder(w).Encode(response)
 
 }

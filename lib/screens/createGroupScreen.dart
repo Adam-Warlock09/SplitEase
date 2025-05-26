@@ -79,6 +79,30 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
           ),
         );
       }else {
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Group Created Successfully!",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: colorScheme.inversePrimary,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
+        await Future.delayed(const Duration(milliseconds: 2500));
+
+        if (!mounted) return;
+
         context.go("/group/${responseData.id}");
       }
 
@@ -182,7 +206,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                           keyboardType: TextInputType.multiline,
                           validator: (value) {
                             if (value != null && value.length > 125) {
-                              return "Name too long (max 50 chars)";
+                              return "Description too long (max 50 chars)";
                             }
                             return null;
                           },

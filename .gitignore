@@ -46,3 +46,4 @@ app.*.map.json
 
 # Backend
 backend/.env
+backend/internal/temp.go

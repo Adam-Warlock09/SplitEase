@@ -14,6 +14,24 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+func UpdateGroupUpdatedAt(groupID bson.ObjectID) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := config.MongoClient.Database("mydb").Collection("groups")
+
+	update := bson.M{
+		"$set": bson.M{
+			"updatedAt": time.Now(),
+		},
+	}
+
+	_, err := collection.UpdateOne(ctx, bson.M{"_id": groupID}, update)
+	return err
+
+}
+
 func RemoveMemberFromGroup(groupID bson.ObjectID, memberID bson.ObjectID) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

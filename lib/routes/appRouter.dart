@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:split_ease/providers/sessionProvider.dart';
+import 'package:split_ease/screens/createExpenseScreen.dart';
 import 'package:split_ease/screens/createGroupScreen.dart';
+import 'package:split_ease/screens/groupExpensesScreen.dart';
 import 'package:split_ease/screens/groupMemberScreen.dart';
 import 'package:split_ease/screens/groupScreen.dart';
 import 'package:split_ease/screens/groupsScreen.dart';
@@ -30,6 +32,14 @@ GoRouter createRouter() {
       GoRoute(path: '/group/:id/members', builder: (context, state) {
         final groupID = state.pathParameters['id']!;
         return GroupMembersPage(groupID: groupID);
+      }),
+      GoRoute(path: '/group/:id/expenses', builder: (context, state) {
+        final groupID = state.pathParameters['id']!;
+        return GroupExpensesPage(groupID: groupID);
+      }),
+      GoRoute(path: '/group/:id/expenses/create', builder: (context, state) {
+        final groupID = state.pathParameters['id']!;
+        return CreateExpensePage(groupID: groupID);
       }),
     ],
     errorBuilder: (context, state) => const NotFoundPage(),

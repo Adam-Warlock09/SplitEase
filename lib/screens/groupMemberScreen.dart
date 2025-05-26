@@ -27,6 +27,7 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
 
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   List<User> _filteredUsers = [];
 
@@ -43,6 +44,7 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -308,7 +310,7 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Failed to load Group Details. Unauthorized or Invalid group.",
+                    "Failed to load Group Details. Unauthorized User or Invalid group.",
                     style: TextStyle(color: colorScheme.error, fontSize: 24),
                     textAlign: TextAlign.center,
                   ),
@@ -357,7 +359,7 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Failed to load search space for Users. Unauthorized or Invalid group.",
+                        "Failed to load search space for Users. Unauthorized User or Invalid group.",
                         style: TextStyle(color: colorScheme.error, fontSize: 24),
                         textAlign: TextAlign.center,
                       ),
@@ -509,269 +511,278 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
                           ],
                         ),
                         Divider(height: 32.0,),
-                        AnimatedSwitcher(
-                          duration: Duration(milliseconds: 300),
-                          switchInCurve: Curves.easeIn,
-                          switchOutCurve: Curves.easeOut,
-                          child: _isSearching
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                        Expanded(
+                          child: Stack(
+                            children: [
+                              Scrollbar(
+                                thumbVisibility: false,
+                                trackVisibility: false,
+                                thickness: 0,
+                                child: SingleChildScrollView(
+                                  primary: true,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        child: TextField(
-                                          controller: _searchController,
-                                          autofocus: true,
-                                          decoration: InputDecoration(
-                                            labelText: 'Search Users',
-                                            prefixIcon: Icon(Icons.person_search),
-                                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),),
-                                          ),
+                                      AnimatedSwitcher(
+                                        duration: Duration(milliseconds: 300),
+                                        switchInCurve: Curves.easeIn,
+                                        switchOutCurve: Curves.easeOut,
+                                        child: _isSearching
+                                          ? Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: TextField(
+                                                        controller: _searchController,
+                                                        autofocus: true,
+                                                        decoration: InputDecoration(
+                                                          labelText: 'Search Users',
+                                                          prefixIcon: Icon(Icons.person_search),
+                                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    AppSpacing.horizontalMd,
+                                                    IconButton(
+                                                      icon: Icon(Icons.close),
+                                                      tooltip: 'Cancel',
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _isSearching = false;
+                                                          _searchController.clear();
+                                                          _filteredUsers.clear();
+                                                        });
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                                AppSpacing.verticalMd,
+                                                Container(
+                                                  constraints: BoxConstraints(maxHeight: 200),
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(color: colorScheme.outline),
+                                                    borderRadius: BorderRadius.circular(12),
+                                                  ),
+                                                  child: _filteredUsers.isEmpty
+                                                    ? Padding(
+                                                        padding: const EdgeInsets.all(16),
+                                                        child: Text(
+                                                          _searchController.text.isEmpty
+                                                            ? 'Start Typing To Search Users'
+                                                            : 'No Users Found',
+                                                          style: textTheme.displayMedium?.copyWith(
+                                                            color: colorScheme.onSurface.withAlpha(170),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : Scrollbar(
+                                                      child: ListView.separated(
+                                                        shrinkWrap: true,
+                                                        itemCount: _filteredUsers.length,
+                                                        separatorBuilder: (context, index) => AppSpacing.verticalSm,
+                                                        itemBuilder:(context, index) {
+                                                          
+                                                          final user = _filteredUsers[index];
+                                      
+                                                          return ListTile(
+                                                            leading: CircleAvatar(
+                                                              foregroundColor: Colors.white,
+                                                              backgroundColor: colorScheme.primaryFixedDim,
+                                                              child: Text(user.name[0]),
+                                                            ),
+                                                            title: Text(user.name),
+                                                            subtitle: Text(user.email),
+                                                            trailing: IconButton(
+                                                              icon: Icon(Icons.person_add, color: colorScheme.secondary,),
+                                                              tooltip: 'Add Member',
+                                                              onPressed: () => _addMember(user.id),
+                                                            ),
+                                                          );
+                                      
+                                                        },
+                                                      ),
+                                                    ),
+                                                ),
+                                                AppSpacing.verticalLg,
+                                              ],
+                                            ) 
+                                          : group.createdBy.id == session.userID
+                                            ? Align(
+                                                alignment: Alignment.center,
+                                                child: ElevatedButton.icon(
+                                                  icon: Icon(Icons.person_add, size: 32, color: colorScheme.onPrimary,),
+                                                  label: Text('Add Users', style: textTheme.displayMedium?.copyWith(color: colorScheme.onPrimary),),
+                                                  style: ElevatedButton.styleFrom(
+                                                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                                    backgroundColor: colorScheme.primary,
+                                                  ),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _isSearching = true;
+                                                      _searchController.clear();
+                                                      _filteredUsers.clear();
+                                                    });
+                                                  },
+                                                ),
+                                              )
+                                            : SizedBox.shrink(),
+                                      ),
+                                      if (group.createdBy.id == session.userID)
+                                      Divider(height: 32.0),
+                                      Text(
+                                        "Members",
+                                        style: textTheme.bodyLarge?.copyWith(
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      AppSpacing.horizontalMd,
-                                      IconButton(
-                                        icon: Icon(Icons.close),
-                                        tooltip: 'Cancel',
-                                        onPressed: () {
-                                          setState(() {
-                                            _isSearching = false;
-                                            _searchController.clear();
-                                            _filteredUsers.clear();
-                                          });
-                                        },
+                                      AppSpacing.verticalMd,
+                                      Column(
+                                        children:
+                                            group.members.map((member) {
+                                              final session = Provider.of<SessionProvider>(context, listen: false);
+                                              var isCreator = member.id == group.createdBy.id;
+                                              final isUserCreator = group.createdBy.id == session.userID;
+                                              var isCurrentUser = member.id == session.userID;
+                                              var canRemove = !isCurrentUser && isUserCreator;
+                                              return Column(
+                                                children: [
+                                                  Stack(
+                                                    children: [
+                                                      Positioned.fill(
+                                                        child: Container(
+                                                          clipBehavior: Clip.antiAlias,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.white70,
+                                                            borderRadius: BorderRadius.circular(12),
+                                                            border: BoxBorder.fromBorderSide(
+                                                              isCreator
+                                                                  ? BorderSide(
+                                                                    color: colorScheme.secondary,
+                                                                    width: 5,
+                                                                  )
+                                                                  : BorderSide(
+                                                                    color: colorScheme.outlineVariant,
+                                                                    width: 5,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Positioned.fill(
+                                                        child: Container(
+                                                          clipBehavior: Clip.antiAlias,
+                                                          decoration: BoxDecoration(
+                                                            color: Theme.of(context)
+                                                                .scaffoldBackgroundColor
+                                                                .withAlpha(isDark ? 230 : 255),
+                                                            borderRadius: BorderRadius.circular(12),
+                                                            border: BoxBorder.fromBorderSide(
+                                                              isCreator
+                                                                  ? BorderSide(
+                                                                    color: colorScheme.secondary,
+                                                                    width: 5,
+                                                                  )
+                                                                  : BorderSide(
+                                                                    color: colorScheme.outlineVariant,
+                                                                    width: 5,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      ListTile(
+                                                        contentPadding: const EdgeInsets.symmetric(
+                                                          horizontal: 12,
+                                                          vertical: 4,
+                                                        ),
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(12),
+                                                        ),
+                                                        leading: CircleAvatar(
+                                                          foregroundColor: Colors.white,
+                                                          backgroundColor: colorScheme.primaryFixed,
+                                                          child: Text(member.name[0]),
+                                                        ),
+                                                        title: Text(member.name),
+                                                        subtitle: Text(member.email),
+                                                        trailing:
+                                                            isCreator
+                                                                ? Container(
+                                                                  padding: const EdgeInsets.symmetric(
+                                                                    horizontal: 8,
+                                                                    vertical: 4,
+                                                                  ),
+                                                                  decoration: BoxDecoration(
+                                                                    color: colorScheme.secondary
+                                                                        .withAlpha(150),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(6),
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisSize: MainAxisSize.min,
+                                                                    children: [
+                                                                      Text(
+                                                                        "Creator",
+                                                                        style: textTheme.bodyLarge
+                                                                            ?.copyWith(
+                                                                              color:
+                                                                                  isDark
+                                                                                      ? colorScheme
+                                                                                          .onSurface
+                                                                                      : colorScheme
+                                                                                          .onSecondary,
+                                                                              fontWeight:
+                                                                                  FontWeight.bold,
+                                                                            ),
+                                                                      ),
+                                                                      AppSpacing.horizontalSm,
+                                                                      Icon(Icons.manage_accounts),
+                                                                    ],
+                                                                  ),
+                                                                )
+                                                              : canRemove
+                                                                ? IconButton(
+                                                                    icon: Icon(Icons.remove_circle, color: colorScheme.error,),
+                                                                    tooltip: 'Remove Member',
+                                                                    onPressed: () async {
+                                  
+                                                                      final confirmed = await showDialog<bool>(
+                                                                        context: context,
+                                                                        builder: (context) => AlertDialog(
+                                                                          icon: Icon(Icons.warning, color: colorScheme.error, size: 36,),
+                                                                          title: Text('Confirm Removal', style: textTheme.displayMedium,),
+                                                                          content: Text('This will permanently remove ${member.name} from the group', style: textTheme.titleLarge,),
+                                                                          actions: [
+                                                                            TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Cancel', style: textTheme.bodyLarge)),
+                                                                            TextButton(onPressed: () => Navigator.pop(context, true), child: Text('Remove', style: textTheme.bodyLarge?.copyWith(color: colorScheme.error),))
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                  
+                                                                      if (confirmed == true){
+                                                                        await _removeMember(member.id);
+                                                                      }
+                                  
+                                                                    },
+                                                                  )
+                                                                : null,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  AppSpacing.verticalSm,
+                                                ],
+                                              );
+                                            }).toList(),
                                       ),
                                     ],
                                   ),
-                                  AppSpacing.verticalMd,
-                                  Container(
-                                    constraints: BoxConstraints(maxHeight: 200),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: colorScheme.outline),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: _filteredUsers.isEmpty
-                                      ? Padding(
-                                          padding: const EdgeInsets.all(16),
-                                          child: Text(
-                                            _searchController.text.isEmpty
-                                              ? 'Start Typing To Search Users'
-                                              : 'No Users Found',
-                                            style: textTheme.displayMedium?.copyWith(
-                                              color: colorScheme.onSurface.withAlpha(170),
-                                            ),
-                                          ),
-                                        )
-                                      : Scrollbar(
-                                        child: ListView.separated(
-                                          shrinkWrap: true,
-                                          itemCount: _filteredUsers.length,
-                                          separatorBuilder: (context, index) => AppSpacing.verticalSm,
-                                          itemBuilder:(context, index) {
-                                            
-                                            final user = _filteredUsers[index];
-
-                                            return ListTile(
-                                              leading: CircleAvatar(
-                                                foregroundColor: Colors.white,
-                                                backgroundColor: colorScheme.primaryFixedDim,
-                                                child: Text(user.name[0]),
-                                              ),
-                                              title: Text(user.name),
-                                              subtitle: Text(user.email),
-                                              trailing: IconButton(
-                                                icon: Icon(Icons.person_add, color: colorScheme.secondary,),
-                                                tooltip: 'Add Member',
-                                                onPressed: () => _addMember(user.id),
-                                              ),
-                                            );
-
-                                          },
-                                        ),
-                                      ),
-                                  ),
-                                  AppSpacing.verticalLg,
-                                ],
-                              ) 
-                            : group.createdBy.id == session.userID
-                              ? Align(
-                                  alignment: Alignment.center,
-                                  child: ElevatedButton.icon(
-                                    icon: Icon(Icons.person_add, size: 32, color: colorScheme.onPrimary,),
-                                    label: Text('Add Users', style: textTheme.displayMedium?.copyWith(color: colorScheme.onPrimary),),
-                                    style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                      backgroundColor: colorScheme.primary,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _isSearching = true;
-                                        _searchController.clear();
-                                        _filteredUsers.clear();
-                                      });
-                                    },
-                                  ),
-                                )
-                              : SizedBox.shrink(),
-                        ),
-                        if (group.createdBy.id == session.userID)
-                        Divider(height: 32.0),
-                        Text(
-                          "Members",
-                          style: textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        AppSpacing.verticalMd,
-                        Column(
-                          children:
-                              group.members.map((member) {
-                                final session = Provider.of<SessionProvider>(context);
-                                var isCreator = member.id == group.createdBy.id;
-                                final isUserCreator = group.createdBy.id == session.userID;
-                                var isCurrentUser = member.id == session.userID;
-                                var canRemove = !isCurrentUser && isUserCreator;
-                                return Column(
-                                  children: [
-                                    Stack(
-                                      children: [
-                                        Positioned.fill(
-                                          child: Container(
-                                            clipBehavior: Clip.antiAlias,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white70,
-                                              borderRadius: BorderRadius.circular(12),
-                                              border: BoxBorder.fromBorderSide(
-                                                isCreator
-                                                    ? BorderSide(
-                                                      color: colorScheme.secondary,
-                                                      width: 5,
-                                                    )
-                                                    : BorderSide(
-                                                      color: colorScheme.outlineVariant,
-                                                      width: 5,
-                                                    ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned.fill(
-                                          child: Container(
-                                            clipBehavior: Clip.antiAlias,
-                                            decoration: BoxDecoration(
-                                              color: Theme.of(context)
-                                                  .scaffoldBackgroundColor
-                                                  .withAlpha(isDark ? 230 : 255),
-                                              borderRadius: BorderRadius.circular(12),
-                                              border: BoxBorder.fromBorderSide(
-                                                isCreator
-                                                    ? BorderSide(
-                                                      color: colorScheme.secondary,
-                                                      width: 5,
-                                                    )
-                                                    : BorderSide(
-                                                      color: colorScheme.outlineVariant,
-                                                      width: 5,
-                                                    ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        ListTile(
-                                          contentPadding: const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 4,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                            side:
-                                                isCreator
-                                                    ? BorderSide(
-                                                      color: colorScheme.secondary,
-                                                      width: 5,
-                                                    )
-                                                    : BorderSide(
-                                                      color: colorScheme.outlineVariant,
-                                                      width: 5,
-                                                    ),
-                                          ),
-                                          leading: CircleAvatar(
-                                            foregroundColor: Colors.white,
-                                            backgroundColor: colorScheme.primaryFixed,
-                                            child: Text(member.name[0]),
-                                          ),
-                                          title: Text(member.name),
-                                          subtitle: Text(member.email),
-                                          trailing:
-                                              isCreator
-                                                  ? Container(
-                                                    padding: const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4,
-                                                    ),
-                                                    decoration: BoxDecoration(
-                                                      color: colorScheme.secondary
-                                                          .withAlpha(150),
-                                                      borderRadius:
-                                                          BorderRadius.circular(6),
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      children: [
-                                                        Text(
-                                                          "Creator",
-                                                          style: textTheme.bodyLarge
-                                                              ?.copyWith(
-                                                                color:
-                                                                    isDark
-                                                                        ? colorScheme
-                                                                            .onSurface
-                                                                        : colorScheme
-                                                                            .onSecondary,
-                                                                fontWeight:
-                                                                    FontWeight.bold,
-                                                              ),
-                                                        ),
-                                                        AppSpacing.horizontalSm,
-                                                        Icon(Icons.manage_accounts),
-                                                      ],
-                                                    ),
-                                                  )
-                                                : canRemove
-                                                  ? IconButton(
-                                                      icon: Icon(Icons.remove_circle, color: colorScheme.error,),
-                                                      tooltip: 'Remove Member',
-                                                      onPressed: () async {
-
-                                                        final confirmed = await showDialog<bool>(
-                                                          context: context,
-                                                          builder: (context) => AlertDialog(
-                                                            icon: Icon(Icons.warning, color: colorScheme.error, size: 36,),
-                                                            title: Text('Confirm Removal', style: textTheme.displayMedium,),
-                                                            content: Text('This will permanently remove ${member.name} from the group', style: textTheme.titleLarge,),
-                                                            actions: [
-                                                              TextButton(onPressed: () => Navigator.pop(context, false), child: Text('Cancel', style: textTheme.bodyLarge)),
-                                                              TextButton(onPressed: () => Navigator.pop(context, true), child: Text('Remove', style: textTheme.bodyLarge?.copyWith(color: colorScheme.error),))
-                                                            ],
-                                                          ),
-                                                        );
-
-                                                        if (confirmed == true){
-                                                          await _removeMember(member.id);
-                                                        }
-
-                                                      },
-                                                    )
-                                                  : null,
-                                        ),
-                                      ],
-                                    ),
-                                    AppSpacing.verticalSm,
-                                  ],
-                                );
-                              }).toList(),
                         ),
                   ],
                 ),

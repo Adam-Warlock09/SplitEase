@@ -72,6 +72,12 @@ func AddMemberHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	_, err = services.GetUserFromID(memberID)
+	if err != nil {
+		http.Error(w, "User Doesn't exist", http.StatusBadRequest)
+		return
+	}
+
 	memberAdded, err := services.AddMemberToGroup(groupID, memberID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

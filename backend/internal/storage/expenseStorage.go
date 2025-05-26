@@ -2,14 +2,54 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/Adam-Warlock09/SplitEase/backend/internal/config"
 	"github.com/Adam-Warlock09/SplitEase/backend/internal/models"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
+
+func RemoveExpenseWithID(expenseID bson.ObjectID) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := config.MongoClient.Database("mydb").Collection("expenses")
+
+	filter := bson.M{"_id" : expenseID}
+
+	_, err := collection.DeleteOne(ctx, filter)
+	return err
+
+}
+
+func GetExpenseByID(expenseID bson.ObjectID) (*models.Expense, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := config.MongoClient.Database("mydb").Collection("expenses")
+
+	filter := bson.M{"_id" : expenseID}
+
+	var expense models.Expense
+
+	err := collection.FindOne(ctx, filter).Decode(&expense)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, errors.New("group not found")
+		}
+		return nil, err
+	}
+
+	return &expense, nil
+
+}
 
 func CreateExpense(expense *models.Expense) (bson.ObjectID, error) {
 
