@@ -815,7 +815,7 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        "No user's fulfilled!",
+                                        "No users added to split!",
                                         style: TextStyle(
                                           color: colorScheme.onError,
                                           fontWeight: FontWeight.bold,

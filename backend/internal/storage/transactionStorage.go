@@ -12,6 +12,27 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+func CreateTransaction(transaction *models.Transaction) (bson.ObjectID, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	collection := config.MongoClient.Database("mydb").Collection("transactions")
+
+	result, err := collection.InsertOne(ctx, transaction)
+	if err != nil {
+		return bson.NilObjectID, err
+	}
+
+	insertedID, ok := result.InsertedID.(bson.ObjectID)
+	if !ok {
+		return bson.NilObjectID, errors.New("inserted ObjectId is not valid")
+	}
+
+	return insertedID, nil
+
+}
+
 func RemoveTransactionWithID(transactionID bson.ObjectID) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:split_ease/providers/sessionProvider.dart';
 import 'package:split_ease/screens/createExpenseScreen.dart';
 import 'package:split_ease/screens/createGroupScreen.dart';
+import 'package:split_ease/screens/createTransactionScreen.dart';
 import 'package:split_ease/screens/groupExpensesScreen.dart';
 import 'package:split_ease/screens/groupMemberScreen.dart';
 import 'package:split_ease/screens/groupScreen.dart';
@@ -45,6 +46,14 @@ GoRouter createRouter() {
       GoRoute(path: '/group/:id/transactions', builder: (context, state) {
         final groupID = state.pathParameters['id']!;
         return GroupTransactionsPage(groupID: groupID);
+      }),
+      GoRoute(path: '/group/:id/transactions/create', builder: (context, state) {
+        final groupID = state.pathParameters['id']!;
+        return CreateTransactionPage(groupID: groupID);
+      }),
+      GoRoute(path: '/group/:id/settle', builder: (context, state) {
+        final groupID = state.pathParameters['id']!;
+        return CreateTransactionPage(groupID: groupID);
       }),
     ],
     errorBuilder: (context, state) => const NotFoundPage(),

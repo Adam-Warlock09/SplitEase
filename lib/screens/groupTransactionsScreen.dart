@@ -535,7 +535,7 @@ class _GroupTransactionsPageState extends State<GroupTransactionsPage> {
                                                   '₹${transaction.amount.toStringAsFixed(2)}',
                                                   style: textTheme.displayLarge?.copyWith(
                                                     fontWeight: FontWeight.bold,
-                                                    color: isInvolved ? isDarkMode ? isPayer ? colorScheme.error : colorScheme.inversePrimary : isPayer ? colorScheme.error : colorScheme.inversePrimary : colorScheme.primary,
+                                                    color: isInvolved ? isDarkMode ? isPayer ? colorScheme.error : Color.fromARGB(255, 7, 125, 58) : isPayer ? colorScheme.error : const Color.fromARGB(255, 29, 177, 34) : colorScheme.primary,
                                                   ),
                                                 ),
                                               ],

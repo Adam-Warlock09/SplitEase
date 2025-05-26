@@ -8,7 +8,7 @@ class Transaction {
   final String toUser;
 
   Transaction({
-     required this.id,
+    required this.id,
     required this.groupID,
     this.notes,
     required this.createdAt,

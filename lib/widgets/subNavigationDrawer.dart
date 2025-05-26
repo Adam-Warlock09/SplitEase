@@ -71,6 +71,11 @@ class MySubDrawer extends StatelessWidget {
             leading: Icon(Icons.payment, color: colorScheme.onSurface),
             onTap: () => context.go('/group/$id/transactions'),
           ),
+          ListTile(
+            title: Text('Settle Up', style: textTheme.displayMedium),
+            leading: Icon(Icons.task_alt, color: colorScheme.onSurface),
+            onTap: () => context.go('/group/$id/settle'),
+          ),
         ],
       ),
     );

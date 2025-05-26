@@ -204,7 +204,7 @@ class _GroupMembersPageState extends State<GroupMembersPage> with SingleTickerPr
     }
   }
 
-    Future<void> _removeMember(String userID) async {
+  Future<void> _removeMember(String userID) async {
 
     final colorScheme = Theme.of(context).colorScheme;
     final session = Provider.of<SessionProvider>(context, listen: false);

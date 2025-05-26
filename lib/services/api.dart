@@ -10,6 +10,46 @@ class ApiService {
 
   final String baseUrl = 'http://localhost:8080';
 
+  Future<Transaction?> createTransaction(String? notes, double amount, String fromUser, String toUser, String groupID, String? token) async {
+
+    if (token == null) {
+      return null;
+    }
+
+    try {
+
+      final requestBody = {
+        'amount': amount,
+        if (notes != null) 'notes': notes,
+        'groupId' : groupID,
+        'fromUser' : fromUser,
+        'toUser' : toUser,
+      };
+      
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/group/$groupID/transactions'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        return Transaction.fromJson(json);
+      } else {
+        print('Create transaction failed: ${response.statusCode} - ${response.body}');
+        return null;
+      }
+
+    } catch (e) {
+      print('Create transaction failed: $e');
+      return null;
+    }
+
+  }
+
   Future<bool> removeTransactionFromGroup(String groupID, String transactionID, String? token) async {
     if (token == null) return false;
 
