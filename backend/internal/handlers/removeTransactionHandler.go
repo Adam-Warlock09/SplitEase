@@ -11,11 +11,11 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-func RemoveExpenseHandler(w http.ResponseWriter, r *http.Request) {
+func RemoveTransactionHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	groupIDHex := vars["groupID"]
-	expenseIDHex := vars["expenseID"]
+	transactionIDHex := vars["transactionID"]
 
 	groupID, err := bson.ObjectIDFromHex(groupIDHex)
 	if err != nil {
@@ -35,12 +35,12 @@ func RemoveExpenseHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if strings.TrimSpace(expenseIDHex) == "" {
+	if strings.TrimSpace(transactionIDHex) == "" {
 		http.Error(w, "ExpenseID is required", http.StatusBadRequest)
 		return
 	}
 
-	expenseID, err := bson.ObjectIDFromHex(expenseIDHex);
+	transactionID, err := bson.ObjectIDFromHex(transactionIDHex);
 	if err != nil {
 		http.Error(w, "Invalid MemberID", http.StatusBadRequest)
 		return
@@ -65,23 +65,23 @@ func RemoveExpenseHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	expense, err := services.GetExpenseByID(expenseID)
+	trasaction, err := services.GetTransactionByID(transactionID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if (expense.PaidBy != userID) {
-		http.Error(w, "User is not creator of expense. Unauthorized", http.StatusUnauthorized)
+	if (trasaction.FromUser != userID && trasaction.ToUser != userID) {
+		http.Error(w, "User is not part of transaction. Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
-	if (expense.GroupID != groupID) {
+	if (trasaction.GroupID != groupID) {
 		http.Error(w, "Expense given isn't a part of the group given.", http.StatusBadRequest)
 		return
 	}
 
-	err = services.RemoveExpenseWithID(expenseID)
+	err = services.RemoveTransactionWithID(transactionID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

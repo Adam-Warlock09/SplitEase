@@ -3,35 +3,93 @@ import 'package:http/http.dart' as http;
 import 'package:split_ease/models/expense.dart';
 import 'package:split_ease/models/group.dart';
 import 'package:split_ease/models/groupDetailed.dart';
+import 'package:split_ease/models/transaction.dart';
 import 'package:split_ease/models/user.dart';
 
 class ApiService {
 
   final String baseUrl = 'http://localhost:8080';
 
-  Future<bool> removeExpenseFromGroup(String groupID, String expenseID, String? token) async {
-  if (token == null) return false;
+  Future<bool> removeTransactionFromGroup(String groupID, String transactionID, String? token) async {
+    if (token == null) return false;
 
-  try {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/api/group/$groupID/expenses/$expenseID'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/api/group/$groupID/transactions/$transactionID'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        }
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print('Failed to remove transaction: ${response.body}');
+        return false;
       }
-    );
-
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      print('Failed to remove expense: ${response.body}');
+    } catch (e) {
+      print('Exception while removing transaction: $e');
       return false;
     }
-  } catch (e) {
-    print('Exception while removing expense: $e');
-    return false;
   }
-}
+
+  Future<List<Transaction>> fetchTransactionsByGroupID(String groupID, String? token) async {
+
+    if(token == null) {
+      return [];
+    }
+
+    try {
+
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/group/$groupID/transactions'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (response.body.trim() == "null") {
+          return [];
+        }
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((transaction) => Transaction.fromJson(transaction)).toList();
+      } else {
+        print('Failed to fetch transactions: ${response.body}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching transactions: $e');
+      return [];
+    }
+
+  }
+
+  Future<bool> removeExpenseFromGroup(String groupID, String expenseID, String? token) async {
+    if (token == null) return false;
+
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/api/group/$groupID/expenses/$expenseID'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        }
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print('Failed to remove expense: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Exception while removing expense: $e');
+      return false;
+    }
+  }
 
   Future<Expense?> createExpense(Expense newExpense, String groupID, String? token) async {
 
@@ -88,11 +146,11 @@ class ApiService {
         final List<dynamic> data = json.decode(response.body);
         return data.map((expense) => Expense.fromJson(expense)).toList();
       } else {
-        print('Failed to fetch users: ${response.body}');
+        print('Failed to fetch expenses: ${response.body}');
         return [];
       }
     } catch (e) {
-      print('Error fetching users: $e');
+      print('Error fetching expenses: $e');
       return [];
     }
 

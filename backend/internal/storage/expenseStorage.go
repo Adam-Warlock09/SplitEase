@@ -42,7 +42,7 @@ func GetExpenseByID(expenseID bson.ObjectID) (*models.Expense, error) {
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, errors.New("group not found")
+			return nil, errors.New("grexpenseoup not found")
 		}
 		return nil, err
 	}
