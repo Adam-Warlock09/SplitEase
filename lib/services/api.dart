@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:split_ease/config/urlConfig.dart';
 import 'package:split_ease/models/expense.dart';
 import 'package:split_ease/models/group.dart';
 import 'package:split_ease/models/groupDetailed.dart';
@@ -9,7 +10,7 @@ import 'package:split_ease/models/user.dart';
 
 class ApiService {
 
-  final String baseUrl = 'http://localhost:8080';
+  final String baseUrl = AppConfig.baseUrl;
 
   Future<List<Settlement>> fetchSettlementsByGroupID(String groupID, String? token) async {
 

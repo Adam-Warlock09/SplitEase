@@ -34,7 +34,7 @@ func main() {
 	router := router.NewRouter()
 	handler := middleware.CORSMiddleware(router)
 
-	fmt.Println("Server starting on http://localhost" + configurer.Port)
+	fmt.Println("Server starting on port " + configurer.Port)
 	
 	err := http.ListenAndServe(configurer.Port, handler)
 

@@ -215,7 +215,7 @@ class _GroupSettlePageState extends State<GroupSettlePage> {
                         userMap[settlement.fromID]!["name"]!
                             .toLowerCase()
                             .contains(query) ||
-                        userMap[settlement.toID]!["email"]!
+                        userMap[settlement.fromID]!["email"]!
                             .toLowerCase()
                             .contains(query),
                   )
