@@ -12,8 +12,8 @@ func LoadConfig() *ServerConfig {
 	if len(port) > 0 && port[0] != ':' {
 		port = ":" + port
 	}
-	
+
 	return &ServerConfig{
-		Port: os.Getenv("PORT"),
+		Port: port,
 	}
 }
