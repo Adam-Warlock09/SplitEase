@@ -23,6 +23,7 @@ func NewRouter() *mux.Router {
 	// LOGIN ROUTE
 	router.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
 	router.HandleFunc("/signup", handlers.SignupHandler).Methods("POST")
+	router.HandleFunc("/health", handlers.CheckHealthHandler).Methods("GET")
 
 	// PROTECTED SUBROUTER
 	protectedSubRouter := router.PathPrefix("/api").Subrouter()
