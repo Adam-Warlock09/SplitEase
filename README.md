@@ -5,7 +5,7 @@ SplitEase is a full-featured bill splitting web application designed to help gro
 ---
 
 ## 🌐 Live Demo
-*Not added yet (Will take a day)*
+*https://splitease-x26h.onrender.com*
 
 ---
 
